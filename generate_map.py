@@ -12,7 +12,7 @@ zip_db['Zip'] = zip_db['Zip'].astype(str).str.zfill(5)
 
 # === Your input ZIP codes ===
 # Replace this with reading from your Excel/Google Sheet
-input_zip_codes = ['10001', '30301', '60601', '94105']  # NYC, ATL, CHI, SF
+input_zip_codes = ['10001', '30301', '60601', '94105']
 
 # Filter the ZIP database for your input ZIPs
 zip_subset = zip_db[zip_db['Zip'].isin(input_zip_codes)].copy()
@@ -20,7 +20,7 @@ zip_subset = zip_db[zip_db['Zip'].isin(input_zip_codes)].copy()
 # Check for missing ZIPs
 missing_zips = set(input_zip_codes) - set(zip_subset['Zip'])
 if missing_zips:
-    print("Missing ZIP codes in database:", missing_zips)
+  print("Missing ZIP codes in database:", missing_zips)
 
 # === Create the Folium map ===
 # Center the map on the average location
