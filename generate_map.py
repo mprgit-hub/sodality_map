@@ -12,7 +12,7 @@ zip_db['Zip'] = zip_db['Zip'].astype(str).str.zfill(5)
 
 # === Your input ZIP codes ===
 # Replace this with reading from your Excel/Google Sheet
-input_zip_codes = ['10001', '30301', '60601', '94105']
+input_zip_codes = ['10001', '30301', '60601', '94105']  # NYC, ATL, CHI, SF
 
 # Filter the ZIP database for your input ZIPs
 zip_subset = zip_db[zip_db['Zip'].isin(input_zip_codes)].copy()
