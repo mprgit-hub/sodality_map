@@ -30,11 +30,11 @@ m = folium.Map(location=[center_lat, center_lon], zoom_start=4)
 
 # Add a marker for each ZIP code
 for _, row in zip_subset.iterrows():
-    folium.Marker(
-        location=[row['Latitude'], row['Longitude']],
-        popup=f"ZIP: {row['Zip']}",
-        icon=folium.Icon(color='blue', icon='info-sign')
-    ).add_to(m)
+  folium.Marker(
+    location=[row['Latitude'], row['Longitude']],
+    popup=f"ZIP: {row['Zip']}",
+    icon=folium.Icon(color='blue', icon='info-sign')
+  ).add_to(m)
 
 # === Save the map to HTML ===
 m.save("zip_map.html")
