@@ -1,10 +1,17 @@
 import pandas as pd
 import folium
 
+# === Load ZIP -> lat/lng lookup ===
+# Download this ZIP code dataset (one-time setup):
+# https://public.opendatasoft.com/explore/dataset/us-zip-code-latitude-and-longitude/export/
+# Save as 'zip_lat_lon.csv'
 zip_db = pd.read_csv("zip_lat_lon.csv")
 
+# Optional: make sure ZIPs are treated as strings with leading zeros
 zip_db['Zip'] = zip_db['Zip'].astype(str).str.zfill(5)
 
+# === Your input ZIP codes ===
+# Replace this with reading from your Excel/Google Sheet
 input_zip_codes = ['10001', '30301', '60601', '94105']  # NYC, ATL, CHI, SF
 
 # Filter the ZIP database for your input ZIPs
@@ -13,7 +20,7 @@ zip_subset = zip_db[zip_db['Zip'].isin(input_zip_codes)].copy()
 # Check for missing ZIPs
 missing_zips = set(input_zip_codes) - set(zip_subset['Zip'])
 if missing_zips:
-    print("⚠️ Missing ZIP codes in database:", missing_zips)
+    print("Missing ZIP codes in database:", missing_zips)
 
 # === Create the Folium map ===
 # Center the map on the average location
@@ -31,4 +38,4 @@ for _, row in zip_subset.iterrows():
 
 # === Save the map to HTML ===
 m.save("zip_map.html")
-print("✅ Map saved to zip_map.html")
+print("Map saved to zip_map.html")
