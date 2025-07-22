@@ -3,7 +3,7 @@ name: Process New ZIPs from Form
 on:
   push:
     paths:
-      - 'incoming/entry_*.json'
+      - "incoming/entry_*.json"
 
 jobs:
   process_zips:
