@@ -1,0 +1,37 @@
+name: Process New ZIPs from Form
+
+on:
+  push:
+    paths:
+      - 'incoming/entry_*.json'
+
+jobs:
+  process_zips:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install pandas folium
+
+      - name: Process incoming ZIPs
+        run: python scripts/process_entries.py
+
+      - name: Generate updated map
+        run: python generate_map.py
+
+      - name: Commit updated data and map
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add zip_codes.csv zip_map.html
+          git rm -f incoming/entry_*.json || true
+          git commit -m "Processed new ZIPs and updated map"
+          git push
