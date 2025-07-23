@@ -1,41 +1,40 @@
 import pandas as pd
 import folium
 
-# === Load ZIP -> lat/lng lookup ===
-# Download this ZIP code dataset (one-time setup):
-# https://public.opendatasoft.com/explore/dataset/us-zip-code-latitude-and-longitude/export/
-# Save as 'zip_lat_lon.csv'
-zip_db = pd.read_csv("zip_lat_lon.csv")
+# === Load ZIP → lat/lon directory ===
+zip_lookup = pd.read_csv("zip_lat_lon.csv")
+zip_lookup["zip"] = zip_lookup["Zip"].astype(str).str.zfill(5)
 
-# Optional: make sure ZIPs are treated as strings with leading zeros
-zip_db['Zip'] = zip_db['Zip'].astype(str).str.zfill(5)
+# === Load input ZIP codes from form ===
+df_zips = pd.read_csv("zip_codes.csv")
+df_zips["zip"] = df_zips["zip"].astype(str).str.zfill(5)
 
-# === Your input ZIP codes ===
-# Replace this with reading from your Excel/Google Sheet
-input_zip_codes = ['10001', '30301', '60601', '94105']
+# === Join and filter for valid lat/lon ===
+merged = pd.merge(df_zips, zip_lookup, how="left", left_on="zip", right_on="zip")
 
-# Filter the ZIP database for your input ZIPs
-zip_subset = zip_db[zip_db['Zip'].isin(input_zip_codes)].copy()
+missing = merged[merged["Latitude"].isna()]
+if not missing.empty:
+    print("ZIP(s) missing from directory:", missing["zip"].tolist())
 
-# Check for missing ZIPs
-missing_zips = set(input_zip_codes) - set(zip_subset['Zip'])
-if missing_zips:
-  print("Missing ZIP codes in database:", missing_zips)
+valid = merged.dropna(subset=["Latitude", "Longitude"])
 
-# === Create the Folium map ===
-# Center the map on the average location
-center_lat = zip_subset['Latitude'].mean()
-center_lon = zip_subset['Longitude'].mean()
+# === Create map ===
+if valid.empty:
+    print("No valid ZIP codes found.")
+    exit()
+
+center_lat = valid["Latitude"].mean()
+center_lon = valid["Longitude"].mean()
 m = folium.Map(location=[center_lat, center_lon], zoom_start=4)
 
-# Add a marker for each ZIP code
-for _, row in zip_subset.iterrows():
-  folium.Marker(
-    location=[row['Latitude'], row['Longitude']],
-    popup=f"ZIP: {row['Zip']}",
-    icon=folium.Icon(color='blue', icon='info-sign')
-  ).add_to(m)
+# Add each ZIP as a marker
+for _, row in valid.iterrows():
+    folium.Marker(
+        location=[row["Latitude"], row["Longitude"]],
+        popup=f"ZIP: {row['zip']}",
+        icon=folium.Icon(color="blue", icon="info-sign")
+    ).add_to(m)
 
-# === Save the map to HTML ===
+# === Save map ===
 m.save("zip_map.html")
 print("Map saved to zip_map.html")

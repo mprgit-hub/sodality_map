@@ -32,7 +32,7 @@ for file in incoming_files:
         else:
             print(f"No valid ZIP in {file.name}")
     except Exception as e:
-        print(f”Error reading {file.name}: {e}")
+        print(f"Error reading {file.name}: {e}")
     file.unlink()
 
 # Remove duplicates and save
