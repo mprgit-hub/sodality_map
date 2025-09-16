@@ -1,6 +1,7 @@
 name: Process New ZIPs from Form
 
 on:
+workflow_dispatch:  #this enables manual runs
   push:
     paths:
       - "incoming/entry_*.json"
