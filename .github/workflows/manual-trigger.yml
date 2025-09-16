@@ -1,0 +1,30 @@
+name: Generate Map (Manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate_only:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - run: pip install pandas folium
+      - name: Generate map
+        run: python generate_map.py
+      - name: Commit map (if changed)
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add zip_map.html zip_codes.csv || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Manual: regenerate map"
+          git push
